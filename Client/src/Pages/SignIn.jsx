@@ -6,6 +6,7 @@ import {
   signInSuccess,
   signInsStart,
 } from "../Redux/Features/userSlice";
+import OAuth from "../Components/OAuth";
 const SignIn = () => {
   const [formData, setFormData] = useState({});
   const { loading, error } = useSelector((state) => state.user);
@@ -21,6 +22,7 @@ const SignIn = () => {
     e.preventDefault();
     try {
       dispatch(signInsStart());
+      console.log(formData);
       const res = await fetch("api/auth/signin", {
         method: "POST",
         headers: {
@@ -64,10 +66,11 @@ const SignIn = () => {
         >
           {loading ? "Loading..." : "Sign Up"}
         </button>
+        <OAuth />
       </form>
       <div className="flex mt-5 gap-2">
         <p>Dont have an account? </p>
-        <Link to={"/sign-in"}>
+        <Link to={"/sign-up"}>
           <span className="text-blue-700">Sign Up</span>
         </Link>
       </div>
