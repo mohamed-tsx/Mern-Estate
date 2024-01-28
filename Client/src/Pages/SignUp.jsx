@@ -50,14 +50,14 @@ const SignUp = () => {
         <input
           type="email"
           id="email"
-          placeholder="username"
+          placeholder="email"
           className="border rounded-lg p-3"
           onChange={handleInputChange}
         />
         <input
           type="password"
           id="password"
-          placeholder="username"
+          placeholder="password"
           className="border rounded-lg p-3"
           onChange={handleInputChange}
         />
