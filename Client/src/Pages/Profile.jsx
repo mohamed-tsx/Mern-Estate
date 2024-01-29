@@ -11,6 +11,9 @@ import {
   updateUserStart,
   updateUserFailure,
   updateUserSuccess,
+  DeleteUserFailure,
+  DeleteUserStart,
+  DeleteUserSuccess,
 } from "../Redux/Features/userSlice";
 
 const Profile = () => {
@@ -20,7 +23,6 @@ const Profile = () => {
   const [updateSuccess, setUpdateSuccess] = useState(false);
   const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
-  console.log(formData);
   const dispatch = useDispatch();
   const fileRef = useRef(null);
 
@@ -79,6 +81,24 @@ const Profile = () => {
       setUpdateSuccess(true);
     } catch (error) {
       dispatch(updateUserFailure(error.message));
+    }
+  };
+
+  const DeleteUserHandler = async () => {
+    try {
+      dispatch(DeleteUserStart());
+      const res = await fetch(`api/user/delete/${currentUser._id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(DeleteUserFailure(data.message));
+        return;
+      }
+
+      dispatch(DeleteUserSuccess(data));
+    } catch (error) {
+      dispatch(DeleteUserFailure(error.message));
     }
   };
 
@@ -144,7 +164,12 @@ const Profile = () => {
         </button>
       </form>
       <div className="flex justify-between mt-5">
-        <span className="text-red-700 cursor-pointer">Delete account</span>
+        <span
+          onClick={DeleteUserHandler}
+          className="text-red-700 cursor-pointer"
+        >
+          Delete account
+        </span>
         <span className="text-red-700 cursor-pointer">Sign out</span>
       </div>
       <p className="mt-5 text-red-700">{error ? error : ""}</p>
