@@ -5,7 +5,7 @@ import { errorHandler } from "../Utils/error.js";
 export const signup = async (req, res, next) => {
   const { username, email, password } = req.body;
 
-  const hashedPassword = bcrypt.hashSync(password, 10);
+  const hashedPassword = bcryptjs.hashSync(password, 10);
   const newUser = new User({ username, email, password: hashedPassword });
 
   try {
@@ -26,7 +26,10 @@ export const signin = async (req, res, next) => {
       return next(errorHandler(401, "User not found"));
     }
 
-    const passwordMatches = await bcrypt.compare(password, validUser.password);
+    const passwordMatches = await bcryptjs.compare(
+      password,
+      validUser.password
+    );
 
     if (!passwordMatches) {
       return next(errorHandler(401, "Wrong credentials"));
@@ -46,7 +49,7 @@ export const google = async (req, res, next) => {
   try {
     const user = await User.findOne({ email: req.body.email });
     if (user) {
-      const token = generateToken(user._id, user.email);
+      const token = generateToken(user._id);
       const { password: pass, ...rest } = user._doc;
       res
         .cookie("access_token", token, { httpOnly: true })
@@ -66,7 +69,7 @@ export const google = async (req, res, next) => {
         avatar: req.body.avatar,
       });
       await newUser.save();
-      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
+      const token = generateToken(newUser._id);
       const { password: pass, ...rest } = newUser._doc;
       res
         .cookie("access_token", token, { httpOnly: true })
@@ -78,8 +81,8 @@ export const google = async (req, res, next) => {
   }
 };
 
-const generateToken = (id, email) => {
-  const payload = { id, email };
+const generateToken = (id) => {
+  const payload = { id };
   const secret = process.env.JWT_SECRET;
   return jwt.sign(payload, secret, {
     expiresIn: "1d",
