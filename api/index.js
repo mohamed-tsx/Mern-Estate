@@ -5,6 +5,7 @@ import authRoutes from "./Routes/authRoutes.js";
 import connectToDatabase from "./Config/db.js";
 import errorMiddleWare from "./Middlewares/errorMiddleware.js";
 import cookieParser from "cookie-parser";
+import listingRoutes from "./Routes/listingRoutes.js";
 
 dotenv.config();
 
@@ -17,6 +18,7 @@ app.use(cookieParser());
 
 app.use("/api/user/", userRoutes);
 app.use("/api/auth/", authRoutes);
+app.use("/api/listing", listingRoutes);
 
 app.use(errorMiddleWare);
 
