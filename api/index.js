@@ -6,10 +6,13 @@ import connectToDatabase from "./Config/db.js";
 import errorMiddleWare from "./Middlewares/errorMiddleware.js";
 import cookieParser from "cookie-parser";
 import listingRoutes from "./Routes/listingRoutes.js";
+import path from "path";
 
 dotenv.config();
 
 const app = express();
+
+const __dirname = path.resolve();
 
 connectToDatabase();
 
@@ -19,6 +22,11 @@ app.use(cookieParser());
 app.use("/api/user/", userRoutes);
 app.use("/api/auth/", authRoutes);
 app.use("/api/listing", listingRoutes);
+
+app.use(express.static(path.join(__dirname, "/Client/dist")));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "Client","dist","index.html"));
+});
 
 app.use(errorMiddleWare);
 
